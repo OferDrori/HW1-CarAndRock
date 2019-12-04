@@ -10,6 +10,11 @@ import android.widget.Button;
 public class menuActivity extends AppCompatActivity {
     private Button played;
 
+
+    /**
+     * ldldldldl
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
