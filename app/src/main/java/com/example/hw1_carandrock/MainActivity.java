@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView main_TXT_score;
     private int counterScore=0;
     private int makeAspaceRock=0;
+    private boolean ternOff=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         Runnable myRun = new Runnable() {
             @Override
             public void run() {
+                if(ternOff==true)
+                {
+                    return;
+                }
                 if(makeAspaceRock%2==0)
                      makeArandomRock();
                 makeAspaceRock++;
@@ -169,5 +174,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ternOff=true;
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ternOff=false;
+        loopFunc();
+    }
 }
