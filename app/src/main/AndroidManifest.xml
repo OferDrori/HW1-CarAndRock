@@ -3,6 +3,7 @@
     package="com.example.hw1_carandrock">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +12,7 @@
         android:supportsRtl="false"
 
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".scoreActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".ScoreActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".MainActivity" android:screenOrientation="portrait"/>
         <activity android:name=".menuActivity" android:screenOrientation="portrait">
             <intent-filter>
