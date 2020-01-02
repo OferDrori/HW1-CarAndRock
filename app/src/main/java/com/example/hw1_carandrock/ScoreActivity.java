@@ -22,15 +22,16 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.hw1_carandrock.Keys.KEY_SCORES;
+
 public class ScoreActivity extends AppCompatActivity {
     private TextView scoreActivity_TXT_score;
     private RelativeLayout score_relative_layout;
     private Button playAgain;
     private Button btnMap;
     private ListView lstView;
-    final String KEY_SCORES = "KEY_SCORES";
     private MySharedPreferences msp;
-    private FragmentTopScoreMap fragment_a;
+   // private FragmentTopScoreMap fragment_a;
     FragmentTransaction transaction = null;
     Fragment frameLayout;
     private boolean changeView = false;
@@ -48,13 +49,13 @@ public class ScoreActivity extends AppCompatActivity {
         lstView = findViewById(R.id.listView_score_lst);
         showtopTenList();
         playAgain.setOnClickListener(goToMenuActivity);
-        btnMap.setOnClickListener(showLocation);
-        fragment_a = new FragmentTopScoreMap(this);
-        transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.top_score, fragment_a);
-        transaction = getSupportFragmentManager().beginTransaction();
-        transaction.hide(fragment_a);
-        transaction.commit();
+        btnMap.setOnClickListener(showLocationActivity);
+       // fragment_a = new FragmentTopScoreMap(this);
+//        transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.top_score, fragment_a);
+//        transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.hide(fragment_a);
+//        transaction.commit();
 
 
     }
@@ -84,7 +85,7 @@ public class ScoreActivity extends AppCompatActivity {
     View.OnClickListener goToMenuActivity = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent next = new Intent(getApplicationContext(), menuActivity.class);
+            Intent next = new Intent(getApplicationContext(), MenuActivity.class);
             startActivity(next);
             finish();
 
@@ -105,7 +106,7 @@ public class ScoreActivity extends AppCompatActivity {
         changeView = true;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().show(fragment_a).commit();
+     //   fragmentManager.beginTransaction().show(fragment_a).commit();
 
         score_relative_layout.setVisibility(View.INVISIBLE);
 
@@ -115,10 +116,20 @@ public class ScoreActivity extends AppCompatActivity {
         changeView = false;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().hide(fragment_a).commit();
+       // fragmentManager.beginTransaction().hide(fragment_a).commit();
         score_relative_layout.setVisibility(View.VISIBLE);
 
     }
+
+    View.OnClickListener showLocationActivity = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent next = new Intent(getApplicationContext(), MapsActivity.class);
+            startActivity(next);
+            finish();
+
+        }
+    };
 
 }
 

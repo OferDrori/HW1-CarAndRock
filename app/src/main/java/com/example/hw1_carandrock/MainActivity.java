@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -30,14 +34,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.example.hw1_carandrock.Keys.CAR;
+import static com.example.hw1_carandrock.Keys.COIN;
+import static com.example.hw1_carandrock.Keys.EMPTY;
+import static com.example.hw1_carandrock.Keys.KEY_SCORES;
+import static com.example.hw1_carandrock.Keys.KEY_SPEED;
+import static com.example.hw1_carandrock.Keys.KEY_TOUCH_CONTROLLER;
+import static com.example.hw1_carandrock.Keys.ROCK;
+
 public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler();
     private Runnable myRun;
-    final static String KEY_SCORES = "KEY_SCORES";
-    final int ROCK = 1;
-    final int CAR = 2;
-    final int COIN = 3;
-    final int EMPTY = 0;
     private GridLayout main_LAY_raceMap;
     private LinearLayout main_LAY_life;
     private Button leftBtn;
@@ -54,28 +61,34 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer boomSound;
     private int speed;
     private MySharedPreferences msp;
-    private Location myLocation;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-
+    private LocationSensor mls;
+    private int isController=0;
+    private boolean ssMode=false;
+    private SensorManager sensorManager;
+    private Sensor sensor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        leftBtn = findViewById(R.id.leftBtn);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        rigthBtn = findViewById(R.id.rigthBtn);
         msp = new MySharedPreferences(this);
-        rigthBtn.setOnClickListener(moveRight);
-        leftBtn.setOnClickListener(moveLeft);
         main_TXT_score = findViewById(R.id.score);
         main_LAY_raceMap = findViewById(R.id.racemap);
         main_LAY_life = findViewById(R.id.main_LAY_life);
         coinSound = MediaPlayer.create(MainActivity.this, R.raw.coinsound);
         boomSound = MediaPlayer.create(MainActivity.this, R.raw.carcrash);
+        leftBtn = findViewById(R.id.leftBtn);
+        rigthBtn = findViewById(R.id.rigthBtn);
+        rigthBtn.setOnClickListener(moveRight);
+        leftBtn.setOnClickListener(moveLeft);
+        sensorManager = (SensorManager) getSystemService(MainActivity.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         int index = 0;
         Intent intent = getIntent();
-        speed = intent.getExtras().getInt("speed");
-        Log.i("speed", speed + " ");
+        speed = intent.getExtras().getInt(KEY_SPEED);
+        //Start collect location data
+        mls = new LocationSensor(this);
+
         for (int i = 0; i < imageArr.length; i++) {
             for (int j = 0; j < imageArr[0].length; j++) {
                 imageArr[i][j] = (ImageView) main_LAY_raceMap.getChildAt(index);
@@ -87,10 +100,36 @@ public class MainActivity extends AppCompatActivity {
             lifeArr[i] = (ImageView) main_LAY_life.getChildAt(i);
         }
         clearLggicGame();
-        Log.i("dsfs", imageArr.length - 2 + " ");
         imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
         logicGame[logicGame.length - 2][carLocation] = CAR;
+
+        isController=isController();
+        if(ssMode==true)
+            sensorManager.unregisterListener(sensorEventListener);
+        ssMode=false;
+
+        Log.e("sexsexsex",""+ssMode);
+
+        Log.e("iscontr",""+isController);
+        if(isController==0) {
+           if(ssMode==false)
+                sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME);
+            ssMode=true;
+
+            leftBtn.setVisibility(View.GONE);
+            rigthBtn.setVisibility(View.GONE);
+        }
+
+
         loopFunc();
+
+
+    }
+
+
+    private int isController() {
+        int checker =msp.getInt(KEY_TOUCH_CONTROLLER,0);
+        return checker;
     }
 
     private void loopFunc() {
@@ -131,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        handler.postDelayed(myRun, 500);
+        handler.postDelayed(myRun, speed);
     }
 
     private void makeItFaster() {
@@ -182,12 +221,7 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener moveLeft = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            imageArr[imageArr.length - 2][carLocation].setImageResource(0);
-            logicGame[logicGame.length - 2][carLocation] = 0;
-            if (carLocation > 0)
-                carLocation--;
-            imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
-            logicGame[logicGame.length - 2][carLocation] = 2;
+            moveLeftFunc();
 
         }
     };
@@ -195,16 +229,29 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            imageArr[imageArr.length - 2][carLocation].setImageResource(0);
-            logicGame[logicGame.length - 2][carLocation] = 0;
-            if (carLocation < imageArr[0].length - 1)
-                carLocation++;
-            imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
-            logicGame[logicGame.length - 2][carLocation] = CAR;
+            moveRightFunc();
 
         }
     };
+void moveRightFunc()
+{
+    imageArr[imageArr.length - 2][carLocation].setImageResource(0);
+    logicGame[logicGame.length - 2][carLocation] = 0;
+    if (carLocation < imageArr[0].length - 1)
+        carLocation++;
+    imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
+    logicGame[logicGame.length - 2][carLocation] = CAR;
+}
 
+    void moveLeftFunc(){
+        imageArr[imageArr.length - 2][carLocation].setImageResource(0);
+        logicGame[logicGame.length - 2][carLocation] = 0;
+        if (carLocation > 0)
+            carLocation--;
+        imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
+        logicGame[logicGame.length - 2][carLocation] = 2;
+
+    }
     boolean isClash(int row, int colm, int type) {
         if (logicGame[row + 1][colm] == CAR) {
             imageArr[row + 1][colm].setImageResource(R.drawable.car);
@@ -215,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "boom!", Toast.LENGTH_SHORT).show();
                 MyFeedbacks.vibrate(getApplicationContext(), 300);
             } else if (type == COIN) {
-                counterScore += 100;
+                counterScore += 10;
                 coinSound.start();
                 Toast.makeText(this, "coin", Toast.LENGTH_SHORT).show();
             }
@@ -245,12 +292,15 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                myLocation = location;
-            }
-        });
+        if(ssMode == true)
+            sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_UI);
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(ssMode == true)
+            sensorManager.unregisterListener(sensorEventListener);
     }
 
     /**
@@ -274,7 +324,9 @@ public class MainActivity extends AppCompatActivity {
     private void addPlayer()
     {
         final EditText name = new EditText(this);
-        final Player player = new Player(counterScore, " ", myLocation);
+        double latitude=msp.getInt("playerLongitude",0);
+        double longitude=msp.getInt("playerLatitude",0);
+        final Player player = new Player(counterScore, " ",longitude,latitude);
         new AlertDialog.Builder(this).setTitle("Game Over!")
                 .setMessage("Add your name")
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
@@ -310,4 +362,34 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(topPlayers);
         msp.putString(KEY_SCORES, gson.toJson(topPlayers));
     }
+
+    SensorEventListener sensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+           float x= event.values[0];
+           Log.i("dfdsf"," "+x);
+           if (x < -8 && x > -6){
+               moveLeftFunc();
+
+            }
+            if (x < -2 && x > -4){
+                moveLeftFunc();
+
+            }
+            if (x < 4 && x > 2){
+                moveRightFunc();
+
+            }
+            if (x < 8 && x > 6){
+                moveRightFunc();
+
+            }
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 }

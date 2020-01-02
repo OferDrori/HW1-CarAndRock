@@ -1,6 +1,7 @@
 package com.example.hw1_carandrock;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -32,6 +33,7 @@ public class MySharedPreferences {
         editor.putString(key, value);
         editor.apply();
     }
+
 
     public void removeKey(String key) {
         prefs.edit().remove(key);
