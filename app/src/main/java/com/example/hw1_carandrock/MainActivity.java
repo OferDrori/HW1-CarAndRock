@@ -37,9 +37,12 @@ import java.util.Random;
 import static com.example.hw1_carandrock.Keys.CAR;
 import static com.example.hw1_carandrock.Keys.COIN;
 import static com.example.hw1_carandrock.Keys.EMPTY;
+import static com.example.hw1_carandrock.Keys.KEY_PLAYER_LATITUDE;
+import static com.example.hw1_carandrock.Keys.KEY_PLAYER_LONGITUDE;
 import static com.example.hw1_carandrock.Keys.KEY_SCORES;
 import static com.example.hw1_carandrock.Keys.KEY_SPEED;
 import static com.example.hw1_carandrock.Keys.KEY_TOUCH_CONTROLLER;
+import static com.example.hw1_carandrock.Keys.KEY_TO_SCORE_ACTIVITY;
 import static com.example.hw1_carandrock.Keys.ROCK;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private int speed;
     private MySharedPreferences msp;
     private LocationSensor mls;
-    private int isController=0;
+    private int isController=1;
     private boolean ssMode=false;
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -108,9 +111,8 @@ public class MainActivity extends AppCompatActivity {
             sensorManager.unregisterListener(sensorEventListener);
         ssMode=false;
 
-        Log.e("sexsexsex",""+ssMode);
 
-        Log.e("iscontr",""+isController);
+
         if(isController==0) {
            if(ssMode==false)
                 sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_GAME);
@@ -267,8 +269,6 @@ void moveRightFunc()
                 Toast.makeText(this, "coin", Toast.LENGTH_SHORT).show();
             }
 
-
-            Log.i("dsa", "" + life);
             return true;
 
         }
@@ -278,7 +278,7 @@ void moveRightFunc()
     void changescreenGameover() {
 
         Intent next = new Intent(getApplicationContext(), ScoreActivity.class);
-        next.putExtra("score", counterScore);
+        next.putExtra(KEY_TO_SCORE_ACTIVITY, counterScore);
         startActivity(next);
         finish();
 
@@ -324,8 +324,10 @@ void moveRightFunc()
     private void addPlayer()
     {
         final EditText name = new EditText(this);
-        double latitude=msp.getInt("playerLongitude",0);
-        double longitude=msp.getInt("playerLatitude",0);
+        double longitude=(double)msp.getFlut(KEY_PLAYER_LONGITUDE,0);
+        double latitude=(double)msp.getFlut(KEY_PLAYER_LATITUDE,0);
+        Log.i("loca",(float)longitude+"");
+        Log.i("loca2",(float)latitude+"");
         final Player player = new Player(counterScore, " ",longitude,latitude);
         new AlertDialog.Builder(this).setTitle("Game Over!")
                 .setMessage("Add your name")
@@ -364,26 +366,31 @@ void moveRightFunc()
     }
 
     SensorEventListener sensorEventListener = new SensorEventListener() {
+        int waitCount=0;
         @Override
         public void onSensorChanged(SensorEvent event) {
            float x= event.values[0];
            Log.i("dfdsf"," "+x);
-           if (x < -8 && x > -6){
-               moveLeftFunc();
+            waitCount++;
+           if(waitCount%2==0) {
 
-            }
-            if (x < -2 && x > -4){
-                moveLeftFunc();
+               if (x < -8 && x > -6) {
+                   moveRightFunc();
 
-            }
-            if (x < 4 && x > 2){
-                moveRightFunc();
+               }
+               if (x < -2 && x > -4) {
+                   moveRightFunc();
 
-            }
-            if (x < 8 && x > 6){
-                moveRightFunc();
+               }
+               if (x < 4 && x > 2) {
+                   moveLeftFunc();
 
-            }
+               }
+               if (x < 8 && x > 6) {
+                   moveLeftFunc();
+
+               }
+           }
 
         }
 

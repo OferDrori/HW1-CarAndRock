@@ -1,7 +1,4 @@
 package com.example.hw1_carandrock;
-
-import android.location.Location;
-
 import androidx.annotation.NonNull;
 
 public class Player implements Comparable<Player> {
@@ -20,7 +17,7 @@ public class Player implements Comparable<Player> {
     @NonNull
     @Override
     public String toString() {
-       return this.name+"         "+this.getScore()+"  in  "+ this.getlatitude()+"  in  "+ this.getLongitude() ;
+       return this.name+"         "+this.getScore();
     }
 
     public int getScore() {

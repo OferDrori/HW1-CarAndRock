@@ -7,11 +7,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-    public class LocationSensor {
+import static com.example.hw1_carandrock.Keys.KEY_PLAYER_LATITUDE;
+import static com.example.hw1_carandrock.Keys.KEY_PLAYER_LONGITUDE;
+
+public class LocationSensor {
         private LocationManager locationManager;
         private LocationListener locationListener;
         private MySharedPreferences msp;
@@ -25,8 +29,10 @@ import androidx.core.content.ContextCompat;
                 public void onLocationChanged(Location location) {
                     double longitude = location.getLongitude();
                     double latitude = location.getLatitude();
-                    msp.putInt("playerLongitude", (int) longitude);
-                    msp.putInt("playerLatitude", (int) latitude);
+                    msp.putFlut(KEY_PLAYER_LONGITUDE,(float)longitude);
+                    msp.putFlut(KEY_PLAYER_LATITUDE,(float)latitude);
+                    Log.i("location",(float)longitude+"");
+                    Log.i("location2",(float)latitude+"");
                 }
 
                 @Override
@@ -58,8 +64,8 @@ import androidx.core.content.ContextCompat;
          * Clear the LatLong from previous player
          */
         private void resetLatLong(){
-            msp.putInt("playerLongitude",  0);
-            msp.putInt("playerLatitude",  0);
+            msp.putFlut(KEY_PLAYER_LONGITUDE,  0);
+            msp.putFlut(KEY_PLAYER_LATITUDE,  0);
         }
     }
 

@@ -15,7 +15,12 @@ public class MySharedPreferences {
     }
 
     public int getInt(String key, int defaultValue) {
+
         return prefs.getInt(key, defaultValue);
+    }
+    public float getFlut(String key, float defaultValue)
+    {
+        return prefs.getFloat(key, defaultValue);
     }
 
     public void putInt(String key, int value) {
@@ -31,6 +36,11 @@ public class MySharedPreferences {
     public void putString(String key, String value) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
+        editor.apply();
+    }
+    public void putFlut(String key, float value) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat(key, value);
         editor.apply();
     }
 
