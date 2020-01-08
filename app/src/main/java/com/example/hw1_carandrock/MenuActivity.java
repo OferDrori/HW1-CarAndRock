@@ -19,7 +19,6 @@ import static com.example.hw1_carandrock.Keys.KEY_TOUCH_CONTROLLER;
 
 public class MenuActivity extends AppCompatActivity {
     private Button btnStart;
-    private ImageView menu_IMG_back;
     private final int FAST_SPEED = 500;
     private final int SLOW_SPEED = 700;
     private int speed=SLOW_SPEED;
