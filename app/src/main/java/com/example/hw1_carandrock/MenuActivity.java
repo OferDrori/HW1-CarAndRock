@@ -8,7 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -30,7 +30,6 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        menu_IMG_back = findViewById(R.id.menu_IMG_back);
         btnStart = findViewById(R.id.menu_BTN_start);
         menu_RDG_speed = findViewById(R.id.menu_RDG_speed);
         menu_RDG_control = findViewById(R.id.menu_RDG_control);

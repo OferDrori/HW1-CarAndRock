@@ -244,6 +244,14 @@ void moveRightFunc()
     imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
     logicGame[logicGame.length - 2][carLocation] = CAR;
 }
+    void moveLocationFunc(int place)
+    {
+        imageArr[imageArr.length - 2][carLocation].setImageResource(0);
+        logicGame[logicGame.length - 2][carLocation] = 0;
+            carLocation=place;
+        imageArr[imageArr.length - 2][carLocation].setImageResource(R.drawable.car);
+        logicGame[logicGame.length - 2][carLocation] = CAR;
+    }
 
     void moveLeftFunc(){
         imageArr[imageArr.length - 2][carLocation].setImageResource(0);
@@ -254,6 +262,7 @@ void moveRightFunc()
         logicGame[logicGame.length - 2][carLocation] = 2;
 
     }
+
     boolean isClash(int row, int colm, int type) {
         if (logicGame[row + 1][colm] == CAR) {
             imageArr[row + 1][colm].setImageResource(R.drawable.car);
@@ -375,19 +384,28 @@ void moveRightFunc()
            if(waitCount%2==0) {
 
                if (x < -8 && x > -6) {
-                   moveRightFunc();
+                   moveLocationFunc(5);
 
                }
                if (x < -2 && x > -4) {
-                   moveRightFunc();
+                   moveLocationFunc(4);
+
+               }
+               if (x < 0 && x > -2) {
+                   moveLocationFunc(3);
+
+               }
+
+               if (x < 2 && x > 0) {
+                   moveLocationFunc(2);
 
                }
                if (x < 4 && x > 2) {
-                   moveLeftFunc();
+                   moveLocationFunc(1);
 
                }
                if (x < 8 && x > 6) {
-                   moveLeftFunc();
+                   moveLocationFunc(0);
 
                }
            }
